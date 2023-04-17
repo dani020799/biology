@@ -1,0 +1,268 @@
+<html>
+  <head>
+    <title>Targil 1</title>
+	<style>
+      body {
+        background-color: #cccccc;
+      }
+	  </style>
+  </head>
+  <body >
+  <center>
+    <table>
+	    <tr>
+		    <td>
+		     L:
+			 </td>
+			 <td>
+			    <input type="text" id="L" />
+			 </td>
+		</tr>
+		 <tr>
+		    <td>
+			 P:
+			</td>
+			<td>
+			<input type="text" id="P" />
+			</td>
+		</tr>
+		 <tr>
+		     <td>
+			 <button type="submit" id="start"  onclick="start()"   > start</button>
+			 </td>
+			  <td>
+			 <button type="submit" id="stop"  onclick="stop()"   > stop/contiue </button>
+			 </td>
+		</tr>
+		 <tr>
+		       
+		</tr>
+		
+	</table>
+    <canvas id="board" width="800" height="700"></canvas>
+    <script>
+      var canvas = document.getElementById("board");
+      var ctx = canvas.getContext("2d");
+      var cellWidth = 8;
+	  var L=5;
+	  var P=0.5;
+      var cellHeight = 6;
+      var gen=1;
+	  var gamestart=false;
+	  var run=false;
+	  var infected=0;
+	  var pepole=0;
+	  var data=[];
+	  
+	  function start()
+	  {
+	    if (!gamestart)
+		{
+		  gamestart=true;
+		  run=true;
+		  L=parseInt(document.getElementById("L").value);
+		  P=parseInt(document.getElementById("P").value);
+		  Createboard();		 		  
+		}
+	  }
+	  function stop ()
+	  {
+	    run= !run;
+	  }
+      // Draw the board
+	 const board =[];
+	  function Createboard()
+	  {
+	     for (var i = 0; i < 100; i++) {
+            board[i]=[]
+        for (var j = 0; j < 100; j++) {
+               var rnd=Math.random();
+			   console.log(P/100.0);
+			   if ( rnd <P/100.0)
+			   {
+			   board[i][j]=
+			   {
+			      isalive:true,				 
+				  isinfected:false,
+				  gentospread:L,
+                  level:Math.floor(Math.random() *4) +1,
+				  rummersnum:0               				 
+			    
+			   };
+			    pepole ++;
+			   }
+			   else
+			   {
+			      board[i][j]=
+			   {
+			    isalive:false,				 
+				  isinfected:false,
+				  gentospread:L,
+                  level:Math.floor(Math.random() *4) +1,
+				  rummersnum:0                   				 
+			    
+			   
+			   };			   
+            }
+			}
+			}
+		while (true)
+         {
+		      var x= Math.floor(Math.random() *100);
+			   var y= Math.floor(Math.random() *100);
+			   if (  board[x][y].isalive== true)
+			   {
+			     board[x][y].isinfected =true;
+				 break;
+			   }
+          }
+         infected++;		  
+	 
+	  }
+	  
+	  var intervalId = setInterval(game, 200);
+	  function game ()
+	  {
+	    if (gamestart && run)
+		{
+	      ctx.fillStyle = "white";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+		  ctx.font = "24px Arial";
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+	  var str= "generation: "+ gen;
+      ctx.fillText(str, canvas.width/2, 50);
+	    drawboard();
+		speard();
+		checkifinfected();
+		gen ++;
+		}
+	  }
+	  
+	  function drawboard()
+	  {
+	     var x=0;
+		 var y=100;
+      for (var i = 0; i < 100;  i++,x += cellWidth) {
+        for (var j = 0; j < 100; j++,y += cellHeight) {
+		  ctx.strokeStyle = "black";
+           ctx.lineWidth = 2;
+		   if (board[i][j].isalive)
+             ctx.fillStyle = "red";
+			  if (!board[i][j].isalive)
+             ctx.fillStyle = "blue";
+			  if (board[i][j].isinfected)
+			   ctx.fillStyle = "black";
+          ctx.fillRect(x, y, cellWidth, cellHeight);
+		  ctx.strokeRect(x, y, cellWidth, cellHeight);
+        }
+		y=100;
+		}
+      }
+	  
+	  function speard(  )
+	  {
+	      for (var i = 0; i < 100;  i++) {
+        for (var j = 0; j < 100; j++) {
+		
+		    if ( board[i][j].isinfected)
+			{
+			  if ( board[i][j].gentospread ==0)
+			  {
+			  for (var a=i-1; a<i+2; a++)
+			  {
+			    for (var b=j-1; b<j+2; b++)
+			    {
+				    if ((a >=0 && a <=99)&& (b >=0 && b <=99))
+				    if (board[a][b].isalive)
+					{
+					 board[a][b].rummersnum = board[a][b].rummersnum +1;
+					}
+				}
+				}
+				board[i][j].gentospread=L;
+			  }
+			  
+			  else
+			  {
+			    board[i][j].gentospread =board[i][j].gentospread -1;
+			  }
+			}
+		
+		}
+		}
+	  	  	  
+	  }
+	  
+	  function checkifinfected()
+	  {
+	     for (var i = 0; i < 100;  i++) {
+        for (var j = 0; j < 100; j++) {
+		   
+		   if (!board[i][j].isinfected && board[i][j].isalive)
+		   {
+		      rnd =Math.random();
+		     if ( board[i][j].rummersnum ==1)
+			 {
+			   if ( board[i][j].level==1)
+			   {
+			      board[i][j].isinfected=true;
+				  infected ++;
+			   }
+			   
+			   if ( board[i][j].level==2 && rnd <0.66)
+			   {
+			       
+			      board[i][j].isinfected=true;
+				   infected ++;
+			   }
+			   
+			   if ( board[i][j].level==3 && rnd <0.33)
+			   {
+			       
+			      board[i][j].isinfected=true;
+				   infected ++;
+			   }
+			 }
+			 
+			 else if ( board[i][j].rummersnum >1)
+			 {
+			      if ( board[i][j].level==1)
+			   {
+			      board[i][j].isinfected=true;
+				   infected ++;
+			   }
+			   
+			   if ( board[i][j].level==2 )
+			   {
+			       
+			      board[i][j].isinfected=true;
+				   infected ++;
+			   }
+			   
+			   if ( board[i][j].level==3 && rnd <0.66)
+			   {
+			       
+			      board[i][j].isinfected=true;
+				   infected ++;
+			   }
+			   
+			   if ( board[i][j].level==4 && rnd <0.33)
+			   {
+			       
+			      board[i][j].isinfected=true;
+				   infected ++;
+			   }
+			 }
+			  board[i][j].rummersnum=0;
+		   }
+		
+		}
+		}
+	  }
+	  
+    </script>
+	
+	</center>
+  </body>
+</html>
