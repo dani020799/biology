@@ -26,12 +26,31 @@
 			<input type="text" id="P" />
 			</td>
 		</tr>
+		
+		<tr>
+		<td>
+		    seif:
+		</td>
+		   <td>
+		       <input type="radio" id="A" name="seif" value="A" checked="checked"> A </input>
+			    <input type="radio" id="B" name="seif" value="B"> B  </input>
+		   </td>
+		   <td>
+		      
+		   </td>
+		    
+		</tr>
 		 <tr>
 		     <td>
 			 <button type="submit" id="start"  onclick="start()"   > start</button>
 			 </td>
 			  <td>
 			 <button type="submit" id="stop"  onclick="stop()"   > stop/contiue </button>
+			  <button type="submit" id="download"  onclick="download()"   > download </button>
+			 
+			 </td>
+			 <td>
+			 
 			 </td>
 			 
 			
@@ -49,9 +68,11 @@
 	  var L=5;
 	  var P=0.5;
       var cellHeight = 6;
+	  
       var gen=1;
 	  var gamestart=false;
 	  var run=false;
+	  var seifB=false;
 	  var infected=0;
 	  var pepole=0;
 	  var data=[];
@@ -64,7 +85,19 @@
 		  run=true;
 		  L=parseInt(document.getElementById("L").value);
 		  P=parseInt(document.getElementById("P").value);
-		  Createboard();		 		  
+		 	
+          var radios= document.getElementsByName("seif");	  
+		  for (var i = 0, length = radios.length; i < length; i++) {
+           if (radios[i].checked && radios[i].value =="B") {
+    // do whatever you want with the checked radio
+           seifB=true;
+
+    // only one radio can be logically checked, don't check the rest
+            break;
+  }
+  
+}
+ Createboard();
 		}
 	  }
 	  function stop ()
@@ -134,11 +167,55 @@
 				 break;
 			   }
           }
-         infected++;		  
+         infected++;	
+          if (seifB)
+             {
+			 //console.log ("here");
+                 for (var i = 0; i < 100;  i++) {
+               for (var j = 0; j < 100; j++) { 
+			     var neighbors =0;
+				 if (board[i][j].isalive)
+				 {
+			    for (var a=i-1; a<i+2; a++)
+			  {
+			    for (var b=j-1; b<j+2; b++)
+			    {
+				    if ((a >=0 && a <=99)&& (b >=0 && b <=99))
+				    if (board[a][b].isalive)
+					{
+					 neighbors++;
+					}
+				}
+				}
+				
+				
+				neighbors --;
+			     if (neighbors<=1)
+				   board[i][j].level=1;
+				 else if   (neighbors>1 && neighbors<=2)
+				 board[i][j].level=2;
+				 else if (neighbors>2 && neighbors<=4)
+				 board[i][j].level=3;
+				 else
+				  board[i][j].level=4;
+				  
+				  //console.log(neighbors)
+				  // console.log("level")
+				   // console.log(board[i][j].level)
+				 
+				    
+				   
+				  
+			   }
+			   }
+			   }
+                   
+			 
+              }			 
 	 
 	  }
 	  
-	  var intervalId = setInterval(game, 200);
+	  var intervalId = setInterval(game, 100);
 	  function game ()
 	  {
 	    if (gamestart && run)
