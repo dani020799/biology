@@ -26,7 +26,14 @@
 			<input type="text" id="P" />
 			</td>
 		</tr>
-		
+		<tr>
+		   <td>
+		      mil for gen:
+		   </td>
+		   <td>
+		       <input type="text" id="speed" />
+		   </td>
+		</tr>
 		<tr>
 		<td>
 		    seif:
@@ -68,7 +75,7 @@
 	  var L=5;
 	  var P=0.5;
       var cellHeight = 6;
-	  
+	  var speed;
       var gen=1;
 	  var gamestart=false;
 	  var run=false;
@@ -76,7 +83,7 @@
 	  var infected=0;
 	  var pepole=0;
 	  var data=[];
-	  
+	  var intervalId;
 	  function start()
 	  {
 	    if (!gamestart)
@@ -85,7 +92,7 @@
 		  run=true;
 		  L=parseInt(document.getElementById("L").value);
 		  P=parseInt(document.getElementById("P").value);
-		 	
+		  speed=parseInt(document.getElementById("speed").value);	
           var radios= document.getElementsByName("seif");	  
 		  for (var i = 0, length = radios.length; i < length; i++) {
            if (radios[i].checked && radios[i].value =="B") {
@@ -98,6 +105,7 @@
   
 }
  Createboard();
+    intervalId = setInterval(game, speed);
 		}
 	  }
 	  function stop ()
@@ -194,10 +202,17 @@
 				   board[i][j].level=1;
 				 else if   (neighbors>1 && neighbors<=2)
 				 board[i][j].level=2;
-				 else if (neighbors>2 && neighbors<=4)
+				 else if (neighbors>2 && neighbors<=5)
 				 board[i][j].level=3;
 				 else
-				  board[i][j].level=4;
+				 {
+				  var rnd2=Math.random();
+				  if (rnd <0.6)
+				   board[i][j].level=4;
+				   else
+				    board[i][j].level=3;
+				   
+				  }
 				  
 				  //console.log(neighbors)
 				  // console.log("level")
@@ -215,7 +230,7 @@
 	 
 	  }
 	  
-	  var intervalId = setInterval(game, 100);
+	
 	  function game ()
 	  {
 	    if (gamestart && run)
