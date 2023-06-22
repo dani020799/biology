@@ -171,8 +171,9 @@ def main():
 
     print (float(counter/len(testlines)))
     with open('wnet0.txt', 'w') as file:
+        file.writelines(str(-100)+ '\n' + str(100)+"\n")
+        file.writelines(str(bestp.nuro1.bias)+"\n"+str(bestp.nuro2.bias))
 
-        file.writelines(str(bestp.nuro1.bias)+","+str(bestp.nuro2.bias))
 
 
 
